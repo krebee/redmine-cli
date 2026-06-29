@@ -1,0 +1,8 @@
+{
+  "name": "redmine-cli-darwin-arm64",
+  "version": "0.1.0",
+  "description": "macOS arm64 binary for redmine-cli",
+  "license": "MIT OR Apache-2.0",
+  "os": ["darwin"],
+  "cpu": ["arm64"]
+}
