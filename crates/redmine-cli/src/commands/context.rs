@@ -40,7 +40,7 @@ impl ClientContext {
 }
 
 impl CommandOutput {
-    pub(super) fn local(data: Value) -> Self {
+    pub(super) const fn local(data: Value) -> Self {
         Self {
             data,
             profile: None,

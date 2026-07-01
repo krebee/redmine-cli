@@ -41,7 +41,7 @@ fn output_format(cli: &Cli) -> OutputFormat {
     }
 }
 
-fn operation(command: &Command) -> &'static str {
+const fn operation(command: &Command) -> &'static str {
     match command {
         Command::Config(command) => match command.command {
             ConfigSubcommand::Init { .. } => "config.init",

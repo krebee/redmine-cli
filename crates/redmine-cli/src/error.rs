@@ -43,7 +43,7 @@ pub enum AgentError {
 }
 
 impl AgentError {
-    pub fn code(&self) -> &'static str {
+    pub const fn code(&self) -> &'static str {
         match self {
             Self::MissingConfig => "CONFIG_NOT_FOUND",
             Self::MissingProfile(_) => "CONFIG_PROFILE_NOT_FOUND",
@@ -67,13 +67,14 @@ impl AgentError {
             Self::MissingConfig => "No redmine-cli config file was found.".to_string(),
             Self::MissingProfile(profile) => format!("Profile `{profile}` was not found."),
             Self::MissingEnv(name) => format!("Environment variable `{name}` is not set."),
-            Self::InvalidConfig(message) | Self::InvalidInput(message) => message.clone(),
+            Self::InvalidConfig(message)
+            | Self::InvalidInput(message)
+            | Self::Redmine { message, .. } => message.clone(),
             Self::Io(error) => error.to_string(),
             Self::TomlSer(error) => error.to_string(),
             Self::TomlDe(error) => error.to_string(),
             Self::Json(error) => error.to_string(),
             Self::Http(error) => error.to_string(),
-            Self::Redmine { message, .. } => message.clone(),
         }
     }
 

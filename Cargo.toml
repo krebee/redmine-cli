@@ -15,4 +15,8 @@ categories = ["api-bindings", "command-line-utilities"]
 unsafe_code = "forbid"
 
 [workspace.lints.clippy]
-all = "warn"
+all = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+multiple-crate-versions = "allow"

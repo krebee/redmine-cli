@@ -93,7 +93,7 @@ async fn create(
     let issue = request.into_payload()?;
 
     if dry_run {
-        Ok(issue_preview("POST", ISSUE_COLLECTION_PATH, issue))
+        Ok(issue_preview("POST", ISSUE_COLLECTION_PATH, &issue))
     } else {
         client.issue_create(issue).await
     }
@@ -109,7 +109,7 @@ async fn update(
     let path = issue_path(issue_id);
 
     if dry_run {
-        Ok(issue_preview("PUT", path, issue))
+        Ok(issue_preview("PUT", path, &issue))
     } else {
         client.issue_update(issue_id, issue).await
     }
@@ -121,11 +121,11 @@ async fn comment(
     notes: String,
     dry_run: bool,
 ) -> Result<Value, AgentError> {
-    let issue = IssuePayload::new().string("notes", notes).into_value();
+    let issue = IssuePayload::new().string("notes", &notes).into_value();
     let path = issue_path(issue_id);
 
     if dry_run {
-        Ok(issue_preview("PUT", path, issue))
+        Ok(issue_preview("PUT", path, &issue))
     } else {
         client.issue_update(issue_id, issue).await
     }
@@ -135,7 +135,7 @@ fn issue_path(issue_id: u64) -> String {
     format!("issues/{issue_id}.json")
 }
 
-fn issue_preview(method: &str, path: impl Into<String>, issue: Value) -> Value {
+fn issue_preview(method: &str, path: impl Into<String>, issue: &Value) -> Value {
     json!({
         "dryRun": true,
         "method": method,
@@ -158,8 +158,8 @@ struct CreateIssueRequest {
 impl CreateIssueRequest {
     fn into_payload(self) -> Result<Value, AgentError> {
         let payload = IssuePayload::new()
-            .string("project_id", self.project)
-            .string("subject", self.subject)
+            .string("project_id", &self.project)
+            .string("subject", &self.subject)
             .optional_string(
                 "description",
                 read_description(self.description, self.description_file)?,
@@ -204,14 +204,14 @@ impl IssuePayload {
         Self { fields: Map::new() }
     }
 
-    fn string(mut self, key: &str, value: String) -> Self {
+    fn string(mut self, key: &str, value: &str) -> Self {
         self.fields.insert(key.to_string(), json!(value));
         self
     }
 
     fn optional_string(self, key: &str, value: Option<String>) -> Self {
         match value {
-            Some(value) => self.string(key, value),
+            Some(value) => self.string(key, &value),
             None => self,
         }
     }
@@ -314,7 +314,7 @@ mod tests {
 
     #[test]
     fn issue_preview_wraps_issue_payload() {
-        let preview = issue_preview("PUT", "issues/10.json", json!({ "notes": "Done" }));
+        let preview = issue_preview("PUT", "issues/10.json", &json!({ "notes": "Done" }));
 
         assert_eq!(
             preview,

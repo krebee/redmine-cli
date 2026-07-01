@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
@@ -67,11 +67,11 @@ pub fn config_path() -> Result<PathBuf, AgentError> {
     }
 
     if let Some(path) = env_path("XDG_CONFIG_HOME") {
-        return Ok(config_file_under(path));
+        return Ok(config_file_under(&path));
     }
 
     if let Some(path) = env_path("APPDATA") {
-        return Ok(config_file_under(path));
+        return Ok(config_file_under(&path));
     }
 
     if let Some(path) = env_path("HOME") {
@@ -87,7 +87,7 @@ fn env_path(name: &str) -> Option<PathBuf> {
     env::var(name).ok().map(PathBuf::from)
 }
 
-fn config_file_under(base: PathBuf) -> PathBuf {
+fn config_file_under(base: &Path) -> PathBuf {
     base.join("redmine-cli").join("config.toml")
 }
 
