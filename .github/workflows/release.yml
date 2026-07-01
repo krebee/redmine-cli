@@ -58,7 +58,6 @@ jobs:
           Copy-Item "target/${{ matrix.target }}/release/${{ matrix.binary }}" $packageDir
           Copy-Item README.md $packageDir
           Copy-Item LICENSE-MIT $packageDir
-          Copy-Item LICENSE-APACHE $packageDir
 
           if ($asset.EndsWith(".zip")) {
             Compress-Archive -Path "$packageDir/*" -DestinationPath "dist/$asset" -Force

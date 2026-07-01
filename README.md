@@ -80,9 +80,4 @@ git push origin v0.1.0
 
 ## License
 
-Licensed under either of:
-
-- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
-- MIT License ([LICENSE-MIT](LICENSE-MIT))
-
-at your option.
+Licensed under the MIT License ([LICENSE-MIT](LICENSE-MIT)).
