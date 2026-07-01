@@ -80,6 +80,12 @@ redmine-cli/
 Rust 本体は標準 toolchain に寄せ、format、lint、test を CI で必須にする。
 具体的な開発コマンドは [README.md](../README.md) に置く。
 
+CI は個人開発の master branch 直 push 運用を前提にする。
+そのため pull request trigger は置かず、`master` branch への push と手動実行で品質ゲートを回す。
+
+リリースは `v*.*.*` tag の push を契機に GitHub Actions で自動化する。
+release build では Linux、Windows、macOS 向けの `redmine-cli` 単一バイナリを作成し、checksum と合わせて GitHub Release に添付する。
+
 ## CLI の形
 
 resource-oriented なコマンドにする。

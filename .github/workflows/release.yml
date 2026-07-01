@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary: redmine-cli
+            asset: redmine-cli-x86_64-unknown-linux-gnu.tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary: redmine-cli.exe
+            asset: redmine-cli-x86_64-pc-windows-msvc.zip
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            binary: redmine-cli
+            asset: redmine-cli-x86_64-apple-darwin.tar.gz
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo files
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build --release --locked -p redmine-cli --target ${{ matrix.target }}
+
+      - name: Package binary
+        shell: pwsh
+        run: |
+          $asset = "${{ matrix.asset }}"
+          $packageDir = "dist/package"
+          New-Item -ItemType Directory -Force -Path $packageDir | Out-Null
+          Copy-Item "target/${{ matrix.target }}/release/${{ matrix.binary }}" $packageDir
+          Copy-Item README.md $packageDir
+          Copy-Item LICENSE-MIT $packageDir
+          Copy-Item LICENSE-APACHE $packageDir
+
+          if ($asset.EndsWith(".zip")) {
+            Compress-Archive -Path "$packageDir/*" -DestinationPath "dist/$asset" -Force
+          } else {
+            tar -czf "dist/$asset" -C $packageDir .
+          }
+
+      - name: Generate checksum
+        shell: pwsh
+        run: |
+          $asset = "${{ matrix.asset }}"
+          $hash = Get-FileHash "dist/$asset" -Algorithm SHA256
+          "$($hash.Hash.ToLower())  $asset" | Set-Content -NoNewline "dist/$asset.sha256"
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/${{ matrix.asset }}
+            dist/${{ matrix.asset }}.sha256

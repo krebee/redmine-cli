@@ -44,6 +44,19 @@ cargo test --workspace
 cargo run -p redmine-cli -- --version
 ```
 
+## CI / Release
+
+CI は `master` branch への push と手動実行で動きます。
+Pull request 前提の運用にはしていません。
+
+リリースは `v*.*.*` 形式の tag を push すると自動で実行されます。
+Linux、Windows、macOS 向けの release binary と SHA256 checksum を GitHub Release に添付します。
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
 ## リポジトリ構成
 
 ```text
