@@ -11,13 +11,14 @@
 
 ## 守ること
 
-- 実装本体は Rust、配布入口は npm wrapper という前提を維持する。
+- 実装本体は Rust の単一バイナリという前提を維持する。
 - agent 向けの安定した JSON 出力を壊さない。
 - write 系 command は可能な範囲で `--dry-run` を用意する。
 - destructive な command は `--confirm` を必須にする。
 - Redmine instance ごとに異なる ID や custom field を固定値として決め打ちしない。
 - 秘密情報を標準出力に出さない。
 - command code で直接表示を組み立てず、output layer を通す。
+- コミットメッセージは Conventional Commits に準拠する。
 
 ## 変更時の確認
 
@@ -27,7 +28,6 @@
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
-npm.cmd run check:npm
 ```
 
 未関係な refactor は避けてください。

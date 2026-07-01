@@ -6,6 +6,10 @@ resolver = "2"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/your-org/redmine-cli"
+description = "Agent-friendly Redmine CLI"
+readme = "README.md"
+keywords = ["redmine", "cli", "agent"]
+categories = ["api-bindings", "command-line-utilities"]
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

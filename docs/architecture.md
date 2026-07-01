@@ -28,10 +28,8 @@ LLM agent が扱いやすいことを第一にした Redmine CLI を作る。
 - Test: Rust unit test + integration test
 - Formatter: `rustfmt`
 - Linter: `clippy`
-- Packaging: `npm install -g redmine-cli` を主導線にする。中身は platform-specific な Rust binary を配布する。
 
 Rust を選ぶ理由は、単一バイナリとして配りやすく、Windows/macOS/Linux で動作を安定させやすく、agent が頻繁に呼び出す CLI として起動速度と堅牢性を確保しやすいから。
-npm package は配布経路として使い、実行本体は Rust binary にする。
 
 ## リポジトリ構成案
 
@@ -72,30 +70,14 @@ redmine-cli/
           load_config.rs
           config_schema.rs
       Cargo.toml
-  npm/
-    redmine-cli/
-      package.json
-      bin/
-        redmine-cli.js
-    redmine-cli-win32-x64/
-      package.json
-    redmine-cli-linux-x64/
-      package.json
-    redmine-cli-darwin-arm64/
-      package.json
   tests/
     integration/
   Cargo.toml
 ```
 
-`npm/redmine-cli` は lightweight な meta package にする。
-install 後に `redmine-cli` command が platform package 内の Rust binary を呼び出す。
-将来的には GitHub Releases、Homebrew、winget も追加できるが、最初の入口は npm に寄せる。
-
 ## 品質ゲート
 
 Rust 本体は標準 toolchain に寄せ、format、lint、test を CI で必須にする。
-npm wrapper 側は薄く保つが、JavaScript を置く以上は最低限の syntax check を入れる。
 具体的な開発コマンドは [README.md](../README.md) に置く。
 
 ## CLI の形
@@ -169,7 +151,7 @@ agent が使う前提で、各コマンドはできるだけ次の option を共
 }
 ```
 
-この wrapper を固定すると、agent が retry すべきか、ユーザーに確認すべきか、関連データを追加取得すべきか判断しやすくなる。
+この出力契約を固定すると、agent が retry すべきか、ユーザーに確認すべきか、関連データを追加取得すべきか判断しやすくなる。
 
 ## 設定
 
@@ -256,7 +238,6 @@ Phase 1:
 - structured JSON output
 - Redmine API key auth
 - config、output、error normalization の unit test
-- npm package から Rust binary を起動できる配布 skeleton
 - `cargo fmt`, `cargo clippy`, `cargo test` を CI に入れる
 
 Phase 2:
