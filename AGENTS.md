@@ -18,7 +18,7 @@
 - Redmine instance ごとに異なる ID や custom field を固定値として決め打ちしない。
 - 秘密情報を標準出力に出さない。
 - command code で直接表示を組み立てず、output layer を通す。
-- コミットメッセージは Conventional Commits に準拠する。
+- コミットメッセージは Conventional Commits に準拠し、説明文は日本語で書く。
 
 ## 変更時の確認
 
