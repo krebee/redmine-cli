@@ -2,37 +2,55 @@
 
 LLM agent が扱いやすいことを第一にした Redmine CLI です。
 
-目指す利用体験:
-
-```bash
-cargo install --path crates/redmine-cli
-redmine-cli --version
-redmine-cli issues get 123 --json
-```
-
-実装本体は Rust の単一バイナリにします。
-
-## 現在の状態
-
-初期設計と開発環境 skeleton の段階です。
-
-今あるもの:
-
-- Rust workspace
-- `redmine-cli` CLI skeleton
-- formatter / linter / test の基本コマンド
+Rust の単一バイナリとして実装します。
 
 ## 必要なもの
 
 - Rust stable
 
-## 開発コマンド
+## 使い方
+
+```bash
+cargo run -p redmine-cli -- --version
+cargo run -p redmine-cli -- config init --url https://redmine.example.com --dry-run
+cargo run -p redmine-cli -- projects list --json
+cargo run -p redmine-cli -- issues get 123 --json
+```
+
+Redmine API key は設定された環境変数から読みます。
+既定では `REDMINE_API_KEY` です。
+
+## 主なコマンド
+
+```bash
+redmine-cli config init --url URL [--api-key-env NAME] [--profile NAME] [--default-project ID] [--dry-run]
+redmine-cli config show
+
+redmine-cli projects list [--limit N]
+redmine-cli projects get PROJECT_ID
+
+redmine-cli issues list [--project PROJECT_ID] [--status STATUS_ID] [--limit N]
+redmine-cli issues get ISSUE_ID
+redmine-cli issues create --project PROJECT_ID --subject SUBJECT [--description TEXT | --description-file PATH] [--dry-run]
+redmine-cli issues update ISSUE_ID [--subject TEXT] [--description TEXT] [--status-id ID] [--priority-id ID] [--assigned-to-id ID] [--notes TEXT] [--dry-run]
+redmine-cli issues comment ISSUE_ID --notes TEXT [--dry-run]
+```
+
+共通 option:
+
+```bash
+--json
+--format json|text|table
+--profile PROFILE
+--timeout-ms N
+```
+
+## 開発
 
 ```bash
 cargo fmt --all
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
-cargo run -p redmine-cli -- --version
 ```
 
 確認用:
@@ -41,7 +59,6 @@ cargo run -p redmine-cli -- --version
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
-cargo run -p redmine-cli -- --version
 ```
 
 ## CI / Release
@@ -49,21 +66,11 @@ cargo run -p redmine-cli -- --version
 CI は `master` branch への push と手動実行で動きます。
 Pull request 前提の運用にはしていません。
 
-リリースは `v*.*.*` 形式の tag を push すると自動で実行されます。
-Linux、Windows、macOS 向けの release binary と SHA256 checksum を GitHub Release に添付します。
+`v*.*.*` 形式の tag を push すると、Linux、Windows、macOS 向けの release binary と SHA256 checksum を GitHub Release に添付します。
 
 ```bash
 git tag v0.1.0
 git push origin v0.1.0
-```
-
-## リポジトリ構成
-
-```text
-redmine-cli/
-  crates/redmine-cli/   # Rust CLI 本体
-  docs/architecture.md    # 詳細設計
-  AGENTS.md               # agent 向け作業ルール
 ```
 
 ## ドキュメント
