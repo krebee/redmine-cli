@@ -11,8 +11,16 @@ pub(super) fn run(command: ConfigSubcommand) -> Result<Value, AgentError> {
             api_key_env,
             profile,
             default_project,
+            ssl_no_revoke,
             dry_run,
-        } => init(url, api_key_env, profile, default_project, dry_run),
+        } => init(
+            url,
+            api_key_env,
+            profile,
+            default_project,
+            ssl_no_revoke,
+            dry_run,
+        ),
         ConfigSubcommand::Show => show(),
     }
 }
@@ -22,6 +30,7 @@ fn init(
     api_key_env: String,
     profile: String,
     default_project: Option<String>,
+    ssl_no_revoke: bool,
     dry_run: bool,
 ) -> Result<Value, AgentError> {
     let config = Config::new(
@@ -30,6 +39,7 @@ fn init(
             url,
             api_key_env: Some(api_key_env),
             default_project,
+            ssl_no_revoke,
         },
     );
 

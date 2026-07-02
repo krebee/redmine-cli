@@ -21,6 +21,8 @@ pub struct Profile {
     pub url: String,
     pub api_key_env: Option<String>,
     pub default_project: Option<String>,
+    #[serde(default)]
+    pub ssl_no_revoke: bool,
 }
 
 impl Profile {
@@ -121,6 +123,7 @@ mod tests {
             url: "https://redmine.example.com".to_string(),
             api_key_env: None,
             default_project: None,
+            ssl_no_revoke: false,
         };
 
         assert_eq!(profile.api_key_env_name(), DEFAULT_API_KEY_ENV);
@@ -134,6 +137,7 @@ mod tests {
                 url: "https://redmine.example.com".to_string(),
                 api_key_env: None,
                 default_project: None,
+                ssl_no_revoke: false,
             },
         );
 
@@ -143,5 +147,17 @@ mod tests {
 
         assert_eq!(name, "default");
         assert_eq!(profile.url, "https://redmine.example.com");
+    }
+
+    #[test]
+    fn profile_defaults_ssl_no_revoke_to_false() {
+        let profile: Profile = toml::from_str(
+            r#"
+url = "https://redmine.example.com"
+"#,
+        )
+        .expect("profile should deserialize");
+
+        assert!(!profile.ssl_no_revoke);
     }
 }

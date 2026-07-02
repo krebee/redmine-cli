@@ -67,11 +67,13 @@ async fn run_inner(cli: Cli) -> Result<CommandResult, AgentError> {
     let output = match cli.command {
         Command::Config(command) => CommandOutput::local(config::run(command.command)?),
         Command::Projects(command) => {
-            let context = ClientContext::load(cli.profile.as_deref(), cli.timeout_ms)?;
+            let context =
+                ClientContext::load(cli.profile.as_deref(), cli.timeout_ms, cli.ssl_no_revoke)?;
             context.output(projects::run(&context.client, command.command).await?)
         }
         Command::Issues(command) => {
-            let context = ClientContext::load(cli.profile.as_deref(), cli.timeout_ms)?;
+            let context =
+                ClientContext::load(cli.profile.as_deref(), cli.timeout_ms, cli.ssl_no_revoke)?;
             context.output(issues::run(&context.client, &context.profile, command.command).await?)
         }
     };

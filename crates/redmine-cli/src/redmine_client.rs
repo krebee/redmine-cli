@@ -17,15 +17,18 @@ pub struct RedmineClient {
 }
 
 impl RedmineClient {
-    pub fn new(profile: &Profile, timeout_ms: u64) -> Result<Self, AgentError> {
+    pub fn new(
+        profile: &Profile,
+        timeout_ms: u64,
+        ssl_no_revoke: bool,
+    ) -> Result<Self, AgentError> {
         let api_key_env = profile.api_key_env_name();
         let api_key = std::env::var(api_key_env)
             .map_err(|_| AgentError::MissingEnv(api_key_env.to_string()))?;
+        let client = build_client(timeout_ms, profile.ssl_no_revoke || ssl_no_revoke)?;
 
         Ok(Self {
-            client: Client::builder()
-                .timeout(Duration::from_millis(timeout_ms))
-                .build()?,
+            client,
             base_url: profile.url.trim_end_matches('/').to_string(),
             api_key,
         })
@@ -119,6 +122,17 @@ impl RedmineClient {
 
         parse_response(status.as_u16(), status.is_success(), &text)
     }
+}
+
+fn build_client(timeout_ms: u64, ssl_no_revoke: bool) -> Result<Client, reqwest::Error> {
+    let builder = Client::builder().timeout(Duration::from_millis(timeout_ms));
+    let builder = if ssl_no_revoke {
+        builder.use_rustls_tls()
+    } else {
+        builder
+    };
+
+    builder.build()
 }
 
 fn page_query(limit: u32) -> Vec<(&'static str, String)> {

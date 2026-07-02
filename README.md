@@ -23,7 +23,7 @@ Redmine API key は設定された環境変数から読みます。
 ## 主なコマンド
 
 ```bash
-redmine-cli config init --url URL [--api-key-env NAME] [--profile NAME] [--default-project ID] [--dry-run]
+redmine-cli config init --url URL [--api-key-env NAME] [--profile NAME] [--default-project ID] [--ssl-no-revoke] [--dry-run]
 redmine-cli config show
 
 redmine-cli projects list [--limit N]
@@ -43,6 +43,7 @@ redmine-cli issues comment ISSUE_ID --notes TEXT [--dry-run]
 --format json|text|table
 --profile PROFILE
 --timeout-ms N
+--ssl-no-revoke
 ```
 
 ## 開発

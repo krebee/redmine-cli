@@ -18,10 +18,14 @@ pub(super) struct CommandOutput {
 }
 
 impl ClientContext {
-    pub(super) fn load(profile: Option<&str>, timeout_ms: u64) -> Result<Self, AgentError> {
+    pub(super) fn load(
+        profile: Option<&str>,
+        timeout_ms: u64,
+        ssl_no_revoke: bool,
+    ) -> Result<Self, AgentError> {
         let config = load_config()?;
         let (profile_name, profile) = config.select_profile(profile)?;
-        let client = RedmineClient::new(&profile, timeout_ms)?;
+        let client = RedmineClient::new(&profile, timeout_ms, ssl_no_revoke)?;
 
         Ok(Self {
             client,

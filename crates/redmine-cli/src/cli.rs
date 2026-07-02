@@ -17,6 +17,9 @@ pub struct Cli {
     #[arg(long, global = true, default_value_t = 30000)]
     pub timeout_ms: u64,
 
+    #[arg(long, global = true)]
+    pub ssl_no_revoke: bool,
+
     #[command(subcommand)]
     pub command: Command,
 }
@@ -55,6 +58,9 @@ pub enum ConfigSubcommand {
 
         #[arg(long)]
         default_project: Option<String>,
+
+        #[arg(long)]
+        ssl_no_revoke: bool,
 
         #[arg(long)]
         dry_run: bool,
