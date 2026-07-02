@@ -2,6 +2,7 @@ mod config;
 mod context;
 mod issues;
 mod projects;
+mod update;
 
 use crate::cli::{
     Cli, Command, ConfigSubcommand, IssuesSubcommand, OutputFormat, ProjectsSubcommand,
@@ -58,6 +59,7 @@ const fn operation(command: &Command) -> &'static str {
             IssuesSubcommand::Update { .. } => "issues.update",
             IssuesSubcommand::Comment { .. } => "issues.comment",
         },
+        Command::Update(_) => "self.update",
     }
 }
 
@@ -75,6 +77,9 @@ async fn run_inner(cli: Cli) -> Result<CommandResult, AgentError> {
             let context =
                 ClientContext::load(cli.profile.as_deref(), cli.timeout_ms, cli.ssl_no_revoke)?;
             context.output(issues::run(&context.client, &context.profile, command.command).await?)
+        }
+        Command::Update(command) => {
+            CommandOutput::local(update::run(command, cli.timeout_ms).await?)
         }
     };
 

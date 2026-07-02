@@ -34,6 +34,8 @@ redmine-cli issues get ISSUE_ID
 redmine-cli issues create --project PROJECT_ID --subject SUBJECT [--description TEXT | --description-file PATH] [--dry-run]
 redmine-cli issues update ISSUE_ID [--subject TEXT] [--description TEXT] [--status-id ID] [--priority-id ID] [--assigned-to-id ID] [--notes TEXT] [--dry-run]
 redmine-cli issues comment ISSUE_ID --notes TEXT [--dry-run]
+
+redmine-cli update [--repo OWNER/REPO] [--tag TAG] [--force] [--dry-run] [--confirm]
 ```
 
 共通 option:
@@ -45,6 +47,20 @@ redmine-cli issues comment ISSUE_ID --notes TEXT [--dry-run]
 --timeout-ms N
 --ssl-no-revoke
 ```
+
+## アップデート
+
+GitHub Release から現在の OS / architecture に合う binary を取得して、インストール済みの `redmine-cli` を更新できます。
+実行前に `--dry-run` で対象 release と asset を確認できます。
+
+```bash
+redmine-cli update --dry-run
+redmine-cli update
+```
+
+`update` は実行前に yes/no 確認を表示します。
+CI や agent などの非対話環境では `--confirm` を指定します。
+`Cargo.toml` の `repository` が実際の GitHub repository を指していない場合は、`--repo OWNER/REPO` を指定します。
 
 ## 開発
 

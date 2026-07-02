@@ -1,6 +1,6 @@
 [package]
 name = "redmine-cli"
-version = "0.2.0"
+version = "0.3.0"
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
@@ -11,12 +11,19 @@ categories.workspace = true
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
+flate2 = "1"
 reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+semver = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+sha2 = "0.10"
+self-replace = "1"
+tar = "0.4"
+tempfile = "3"
 thiserror = "1"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 toml = "0.8"
+zip = { version = "2", default-features = false, features = ["deflate"] }
 
 [lints]
 workspace = true

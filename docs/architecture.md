@@ -79,6 +79,7 @@ crates/redmine-cli/src/
 - read: Redmine から取得するだけの command。
 - write: `issues create/update/comment` など。可能な範囲で `--dry-run` を用意します。
 - destructive: 削除など。追加する場合は `--confirm` を必須にします。
+- update: GitHub Release から現在 target 用の binary と SHA256 checksum を取得し、checksum 検証後に実行ファイルを差し替えます。`--dry-run` で対象 release と asset を確認でき、対話端末では yes/no 確認後に実更新します。CI や agent などの非対話環境では `--confirm` を必須にします。
 
 ## CI / Release
 
@@ -92,3 +93,4 @@ cargo test --workspace
 
 Release は `v*.*.*` tag の push で実行します。
 Linux、Windows、macOS 向けに release binary を作り、checksum と合わせて GitHub Release に添付します。
+`update` はこの release binary と `.sha256` asset を利用します。

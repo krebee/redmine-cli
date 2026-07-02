@@ -36,6 +36,26 @@ pub enum Command {
     Config(ConfigCommand),
     Projects(ProjectsCommand),
     Issues(IssuesCommand),
+    #[command(visible_aliases = ["upgrade", "up"])]
+    Update(UpdateCommand),
+}
+
+#[derive(Debug, Args)]
+pub struct UpdateCommand {
+    #[arg(long)]
+    pub repo: Option<String>,
+
+    #[arg(long)]
+    pub tag: Option<String>,
+
+    #[arg(long)]
+    pub force: bool,
+
+    #[arg(long)]
+    pub dry_run: bool,
+
+    #[arg(long)]
+    pub confirm: bool,
 }
 
 #[derive(Debug, Args)]
