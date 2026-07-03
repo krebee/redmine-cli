@@ -7,6 +7,10 @@ Rust の単一バイナリとして実装します。
 ## 必要なもの
 
 - Rust stable
+- Windows で MSVC toolchain を使う場合:
+  - Visual Studio 2022 Build Tools
+  - `Desktop development with C++`
+  - Windows 10/11 SDK
 
 ## 使い方
 
@@ -48,6 +52,10 @@ redmine-cli update [--repo OWNER/REPO] [--tag TAG] [--force] [--dry-run] [--conf
 --ssl-no-revoke
 ```
 
+`--ssl-no-revoke` または config の `ssl_no_revoke = true` を指定した場合、Redmine API 通信用の TLS backend を通常時の native-tls から rustls に切り替えます。
+Windows 環境で TLS 証明書失効確認が原因の接続失敗を回避するための option です。
+TLS 失敗時に HTTPS から HTTP へ自動 fallback することはありません。
+
 ## アップデート
 
 GitHub Release から現在の OS / architecture に合う binary を取得して、インストール済みの `redmine-cli` を更新できます。
@@ -76,6 +84,17 @@ cargo test --workspace
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
+```
+
+Windows で MSVC toolchain を使う場合は、`pwsh` から Visual Studio 2022 Build Tools の環境を明示して実行できます。
+ローカルの Visual Studio installation path は環境ごとに異なるため、repository 側では固定しません。
+
+```powershell
+$vs = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat'
+
+cmd /d /c "`"$vs`" && cargo check --workspace"
+cmd /d /c "`"$vs`" && cargo clippy --workspace --all-targets -- -D warnings"
+cmd /d /c "`"$vs`" && cargo test --workspace"
 ```
 
 ## CI / Release

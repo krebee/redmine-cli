@@ -129,7 +129,7 @@ fn build_client(timeout_ms: u64, ssl_no_revoke: bool) -> Result<Client, reqwest:
     let builder = if ssl_no_revoke {
         builder.use_rustls_tls()
     } else {
-        builder
+        builder.use_native_tls()
     };
 
     builder.build()
@@ -225,5 +225,11 @@ mod tests {
 
         assert_eq!(message, "upstream unavailable");
         assert!(details.is_empty());
+    }
+
+    #[test]
+    fn build_client_supports_both_tls_backends() {
+        build_client(30_000, false).expect("native-tls client should build");
+        build_client(30_000, true).expect("rustls client should build");
     }
 }

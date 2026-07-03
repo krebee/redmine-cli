@@ -116,7 +116,43 @@ impl AgentError {
             Self::Redmine {
                 status: 401 | 403, ..
             } => Some("Check the configured Redmine URL and API key.".to_string()),
+            Self::Http(error) if is_likely_tls_error(error) => Some(
+                "TLS certificate validation failed. Check the Redmine certificate chain and root CA, or retry with `--ssl-no-revoke` if revocation checks are failing.".to_string(),
+            ),
             _ => None,
+        }
+    }
+}
+
+fn is_likely_tls_error(error: &reqwest::Error) -> bool {
+    message_looks_like_tls_error(&error.to_string())
+}
+
+fn message_looks_like_tls_error(message: &str) -> bool {
+    let message = message.to_ascii_lowercase();
+
+    message.contains("tls")
+        || message.contains("certificate")
+        || message.contains("cert")
+        || message.contains("schannel")
+        || message.contains("rustls")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn tls_error_detection_matches_common_messages() {
+        let samples = [
+            "error sending request for url: error trying to connect: invalid peer certificate",
+            "builder error: invalid TLS identity",
+            "schannel: failed to verify certificate revocation",
+            "rustls error: invalid certificate",
+        ];
+
+        for sample in samples {
+            assert!(message_looks_like_tls_error(sample), "{sample}");
         }
     }
 }
